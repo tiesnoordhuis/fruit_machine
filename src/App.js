@@ -26,38 +26,54 @@ function App() {
 
     const subscriptionDevices = daemon.devicesList.subscribe(({ serial, network }) => {
       setSerialDevices(serial);
-      const closedSerial = serial.filter(device => !device.isOpen);
-      closedSerial.forEach(device => {
-        console.log('opening serial monitor', device.Name);
-        daemon.openSerialMonitor(device.Name, 9600);
+      serial.forEach(device => {
+        console.log('serial device', device.Name);
+        if (!device.isOpen) {
+          daemon.openSerialMonitor(device.Name, 9600);
+        }
       });
       setNetworkDevices(network);
     });
 
+    return () => {
+      subscriptionDevices.unsubscribe();
+      subscriptionChannel.unsubscribe();
+      subscriptionAgent.unsubscribe();
+      serialDevices.forEach(device => {
+        if (device.isOpen) {
+          daemon.closeSerialMonitor(device.Name);
+        }
+      });
+    };
+  }, [agentFound, channelStatus, serialDevices, networkDevices]);
+
+  useEffect(() => {
+    let buttonReset;
     const subscriptionSerialMonitor = daemon.serialMonitorMessages.subscribe(message => {
-      setSerialMessage(message);
-      if (message == '1') {
-        console.log('button pressed');
+      if (!buttonPressed) {
         setButtonPressed(true);
-        setTimeout(() => {
+        buttonReset = setTimeout(() => {
           console.log('timeout');
           setButtonPressed(false);
         }, 500);
       }
+      setSerialMessage(message);
     });
 
     return () => {
+      // clearTimeout(buttonReset);
       subscriptionSerialMonitor.unsubscribe();
-      subscriptionDevices.unsubscribe();
-      subscriptionChannel.unsubscribe();
-      subscriptionAgent.unsubscribe();
-    };
-  }, []);
+    }
+  }, [buttonPressed]);
+
+
+  const openSerialMonitor = () => {
+    daemon.openSerialMonitor('/dev/ttyACM0', 9600);
+  }
 
 
   return (
     <div className="App">
-      <p>{`${serialMessage}`}</p>
       <Spinner buttonPressed={buttonPressed} />
       <table>
         <tr>

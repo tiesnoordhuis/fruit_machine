@@ -1,34 +1,32 @@
 // component shows 3 fruits scrolling in a loop till finaly stopping at a random fruit
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 
 function Spinner(props) {
-    return (<div>a</div>);
-    const [fruits, setFruits] = useState(['🍎', '🍌', '🍇']);
-    const [currentFruit, setCurrentFruit] = useState(0);
-    const currentFruitRef = useRef(currentFruit);
+    const [currentFruit, setCurrentFruit] = useState(3);
+    const fruits = ['🍎', '🍌', '🍇', '🛑'];
 
     useEffect(() => {
-        const interval = setInterval(() => {
-            setCurrentFruit((currentFruitRef.current + 1) % fruits.length);
-            currentFruitRef.current = (currentFruitRef.current + 1) % fruits.length;
-        }, 100);
-        return () => clearInterval(interval);
-    }, []);
+        let interval;
 
-    if (props.buttonPressed) {
-        return (
-            <div>
-                <h1>{fruits[currentFruit]}</h1>
-            </div>
-        );
-    } else {
-        return (
-            <div>
-                <h1>🛑</h1>
-            </div>
-        );
-    }
+        if (props.buttonPressed) {
+            interval = setInterval(() => {
+                setCurrentFruit(i => (i + 1) % 3);
+            }, 100);
+        } else {
+            clearInterval(interval);
+        }
+        return () => {
+            clearInterval(interval);
+        }
+    }, [props.buttonPressed]);
+
+    console.log('buttonPressed', props.buttonPressed);
+    return (
+        <div>
+            <h1 style={{fontSize: '5em'}}>{fruits[currentFruit]}</h1>
+        </div>
+    );
 }
 
 export default Spinner;
