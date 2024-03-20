@@ -10,8 +10,8 @@ function App() {
   const [agentFound, setAgentFound] = useState(false);
   const [channelStatus, setChannelStatus] = useState(false);
   const [serialDevices, setSerialDevices] = useState([]);
-  const [networkDevices, setNetworkDevices] = useState([]);
-  const [serialMessage, setSerialMessage] = useState('');
+  const [networkDevices, setNetworkDevices] = useState([])
+  const [pressedCount, setPressedCount] = useState(0);
   const [buttonPressed, setButtonPressed] = useState(false);
 
 
@@ -48,23 +48,17 @@ function App() {
   }, [agentFound, channelStatus, serialDevices, networkDevices]);
 
   useEffect(() => {
-    let buttonReset;
     const subscriptionSerialMonitor = daemon.serialMonitorMessages.subscribe(message => {
       if (!buttonPressed) {
+        setPressedCount(n => n + 1);
         setButtonPressed(true);
-        buttonReset = setTimeout(() => {
-          console.log('timeout');
-          setButtonPressed(false);
-        }, 500);
       }
-      setSerialMessage(message);
     });
 
     return () => {
-      // clearTimeout(buttonReset);
       subscriptionSerialMonitor.unsubscribe();
     }
-  }, [buttonPressed]);
+  }, []);
 
 
   const openSerialMonitor = () => {
@@ -74,7 +68,7 @@ function App() {
 
   return (
     <div className="App">
-      <Spinner buttonPressed={buttonPressed} />
+      <Spinner pressedCount={pressedCount} />
       <table>
         <tr>
           <th>button Pressed</th>
