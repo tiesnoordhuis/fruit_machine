@@ -8,3 +8,6 @@ give group permissions
 
 run react
 `npm run start`
+
+if it doesnt want to open the port, try:
+`fuser -k /dev/ttyACM0`

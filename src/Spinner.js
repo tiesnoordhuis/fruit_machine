@@ -3,11 +3,11 @@ import React, { useState, useEffect } from 'react';
 
 import apple from './images/apple.png';
 import banana from './images/bananas.png';
-import cherries from './images/cherries.png';
 import lemon from './images/lemon.png';
-import plum from './images/plum.png';
 import strawberry from './images/strawberry.png';
-import watermelon from './images/watermelon.png';
+import rozeKoek from './images/roze koek vector.png';
+import grapes from './images/Grapes-512.png';
+import pineapple from './images/pineapple2.png';
 
 import './Spinner.css';
 
@@ -33,7 +33,7 @@ const fruitStyleAfter = {
     height: '100vh',
     display: 'block'
 }
-const fruits = [apple, banana, cherries, lemon, plum, strawberry, watermelon];
+const fruits = [apple, banana, grapes, lemon, pineapple, strawberry, rozeKoek];
 function Spinner(props) {
     const [animationName, setAnimationName] = useState('');
     const displayFruits = [...fruits, ...fruits, ...fruits];
@@ -54,7 +54,9 @@ function Spinner(props) {
         flexDirection: 'column',
         'align-items': 'center',
         'animationDuration': `5000ms`,
-        'animationTimingFunction': 'ease-in-out',
+        // animationTimingFunction is a cubic-bezier function
+        // it starts like ease-in and ends by overshooting the target value
+        'animationTimingFunction': 'cubic-bezier(0.5, 0, 0.6, 1.06)',
         'animationIterationCount': '1',
         'animationPlayState': 'running',
         'animationDirection': 'normal',
